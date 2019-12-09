@@ -1,0 +1,300 @@
+//Skylar Reese
+//cpt 187
+//Purpose: The purpose of this program is to allow the user
+//		   to input a file to read and order from as well 
+//		   as append the file with another entry. THe program will
+//		   then print a receipt of all order details and display
+//		   a final report containing all records.
+//3 December 2019
+
+package edu.cpt187.reese.participation;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Random;
+import java.util.Scanner;
+
+public class Inventory 
+{
+	private final String[] DISCOUNT_NAMES = {"Member", "Senior", "No Discount"};
+	private final double[] DISCOUNT_RATES = {0.25, 0.15, 0.0};
+	private final String[] PRIZE_NAMES = {"Holy Grail", "Goblet", "Mug"};
+	private final int MAX_ITEMS = 5;
+	private final int NOT_FOUND = -1;
+	private final int RESET_VALUE = 0;
+	private int[] itemIDs = new int[MAX_ITEMS];
+	private String[] itemNames = new String[MAX_ITEMS];
+	private double[] itemPrices = new double[MAX_ITEMS];
+	private int[] orderQuantity = new int[MAX_ITEMS];
+	private double[] orderTotal = new double[MAX_ITEMS];
+	private int[] inStockCounts = new int[MAX_ITEMS];
+	private int itemSearchIndex = 0;
+	private int recordCount = 0;
+	private Random prizeGenerator = new Random();
+	
+	public Inventory()
+	{
+	}//End of constructor
+	
+	public void setReduceStock(int borrowedHowMany)
+	{
+		inStockCounts[itemSearchIndex] = inStockCounts[itemSearchIndex] - borrowedHowMany;
+	
+	}//End of reduce stock
+	
+	public void setLoadItems(String borrowedFileName)
+	{
+		recordCount = RESET_VALUE;
+		
+		try
+		{
+			Scanner infile = new Scanner(new FileInputStream(borrowedFileName));
+			
+			while(infile.hasNext() == true && recordCount < MAX_ITEMS)
+			{
+				itemIDs[recordCount] = infile.nextInt();
+				itemNames[recordCount] = infile.next();
+				itemPrices[recordCount] = infile.nextDouble();
+				inStockCounts[recordCount] = infile.nextInt();
+				
+				recordCount++;
+				
+			}//End of while
+			infile.close();
+			
+			int last = recordCount - 1;
+			int index = 0;
+			String swap = "";
+			
+			while(last > 0)
+			{
+				index = 0;
+				swap = "false";
+				
+				while(index < last)
+				{
+					if(itemIDs[index] > itemIDs[index+1])
+					{
+						swapArrayElements();
+						swap = "true";
+					}
+					
+					index++;
+					
+				}//End of 2nd while
+				
+				if(swap == "false")
+				{
+					last = 0;
+				}
+				
+				last = last - 1;
+				
+			}//End of 1st while
+			
+		}//End of try
+		
+		catch (IOException ex)
+		{
+			recordCount = NOT_FOUND;
+			
+		}//End of catch
+		
+	}//End of load items
+	
+	public void setLoadItems(String borrowedFileName, int borrowedSize)
+	{
+		recordCount = RESET_VALUE;
+		
+		try
+		{
+			Scanner infile = new Scanner(new FileInputStream(borrowedFileName));
+			
+			while(infile.hasNext() == true && recordCount < MAX_ITEMS && recordCount < borrowedSize)
+			{
+				itemIDs[recordCount] = infile.nextInt();
+				itemNames[recordCount] = infile.next();
+				itemPrices[recordCount] = infile.nextDouble();
+				orderQuantity[recordCount] = infile.nextInt();
+				orderTotal[recordCount] = infile.nextDouble();
+				inStockCounts[recordCount] = infile.nextInt();
+				
+				recordCount++;
+				
+			}//End of while
+			infile.close();
+			
+			int last = recordCount - 1;
+			int index = 0;
+			String swap = "";
+			
+			while(last > 0)
+			{
+				index = 0;
+				swap = "false";
+				
+				while(index < last)
+				{
+					if(itemIDs[index] > itemIDs[index+1])
+					{
+						swapArrayElements();
+						swap = "true";
+					}
+					
+					index++;
+					
+				}//End of 2nd while
+				
+				if(swap == "false")
+				{
+					last = 0;
+				}
+				
+				last = last - 1;
+				
+			}//End of 1st while
+			
+		}//End of try
+		
+		catch (IOException ex)
+		{
+			recordCount = NOT_FOUND;
+			
+		}//End of catch
+		
+	}//End of load items
+	
+	public void swapArrayElements()
+	{
+		int index = 0;
+		int tempI = 0;
+		double tempD = 0.0;
+		String tempS = "";
+		
+		
+		tempI = itemIDs[index];
+		itemIDs[index] = itemIDs[index + 1];
+		itemIDs[index + 1] = tempI;
+		
+		tempS = itemNames[index];
+		itemNames[index] = itemNames[index + 1];
+		itemNames[index + 1] = tempS;
+		
+		tempD = itemPrices[index];
+		itemPrices[index] = itemPrices[index + 1];
+		itemPrices[index + 1] = tempD;
+		
+		tempI = inStockCounts[index];
+		inStockCounts[index] = inStockCounts[index + 1];
+		inStockCounts[index + 1] = tempI;
+		
+		
+	}//End of swap array elements
+	
+	public void setSearchIndex(int borrowedTarget)
+	{
+		itemSearchIndex = getSearchResults(borrowedTarget);
+		
+	}//End of search index
+	
+	public int[] getInStockCounts()
+	{
+		return inStockCounts;
+		
+	}//End of get stock counts
+	
+	public int[] getItemIDs()
+	{
+		return itemIDs;
+		
+	}//End of get item IDs
+	
+	public String[] getItemNames()
+	{
+		return itemNames;
+		
+	}//End of get item names
+	
+	public double[] getItemPrices()
+	{
+		return itemPrices;
+		
+	}//End of get item prices
+	
+	public String[] getDiscountNames()
+	{
+		return DISCOUNT_NAMES;
+		
+	}//End of get discount names
+	
+	public double[] getDiscountRates()
+	{
+		return DISCOUNT_RATES;
+		
+	}//End of get discount rates
+	
+	public String[] getPrizeNames()
+	{
+		return PRIZE_NAMES;
+		
+	}//End of prize names
+	
+	public int getRandomNumber()
+	{
+		return prizeGenerator.nextInt(PRIZE_NAMES.length);
+		
+	}//End of get random number
+	
+	public int getSearchIndex()
+	{
+		return itemSearchIndex;
+		
+	}//End of get search index
+	
+	public int getRecordCount()
+	{
+		return recordCount;
+		
+	}//End of record count
+	
+	public int getSearchResults(int borrowedBorrowedTarget)
+	{
+		int first = 0;
+		int last = recordCount - 1;
+		String found = "false";
+		int mid = 0;
+		
+		while(first <= last && found == "false")
+		{
+			mid = (first + last) / 2;
+			if(itemIDs[mid] == borrowedBorrowedTarget)
+			{
+				found = "true";
+				
+			}//End of target found
+			
+			else
+			{
+				if(itemIDs[mid] < borrowedBorrowedTarget)
+				{
+					first = mid + 1;
+				}
+				
+				last = mid - 1;
+				
+			}//End of divide array
+			
+		}//End of while
+		
+		if(found == "false")
+		{
+			mid = NOT_FOUND;
+		}
+		
+		return mid;
+		
+	}//End of get search results
+	
+	
+	
+}//End of Inventory class
